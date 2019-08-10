@@ -124,6 +124,7 @@ private:
         return sqrt((playerX - x) * (playerX - x) + (playerY - y) * (playerY - y));
     }
 
+    // zwraca kierunek obliczany na podstawie aktualnej pozycji gracza i podanych wspolrzednych
     int getDirection(int x, int y) {
         if (playerX == x) {
             if (playerY < y) {
@@ -153,6 +154,7 @@ private:
     }
 
 public:
+    // zwraca true, jesli gracz moze przemiescic sie w danym kierunku i nie napotka miny
     bool canMove(int direction) {
         bool canMove = true;
 
@@ -273,6 +275,7 @@ public:
 
     }
 
+    // odtwarza ruch gracza w podanym kierunku
     void move(int direction, bool collect) {
         switch (direction) {
             case 0:
@@ -404,6 +407,7 @@ public:
         }
     }
 
+    // sprawdza czy w danym kierunku znajduje sie diament (nie uwzgledniajac zadnych ograniczen)
     bool isGem(int direction) {
         bool isGem = false;
 
@@ -483,6 +487,7 @@ public:
         }
     }
 
+    // sprawdza czy w danym kierunku znajduje sie diament, uwzgledniajac dziury i sciany
     bool isGemDirectly(int direction) {
         bool isGem = false;
 
@@ -562,6 +567,7 @@ public:
         }
     }
 
+    // sprawdza rekurencyjnie czy istnieje sciezka do diamentu o zadanej dlugosci i kierunku poczatkowym
     bool leadToGem(int direction, int depth) {
         int x = playerX, y = playerY;
         move(direction, false);
@@ -596,6 +602,7 @@ public:
 class Exception {
 };
 
+// glowna petla algorytmu
 bool solve(Game game, string path, int attempt) {
 //    cout << "Path: " << path << ", points: " << game.getCurrentPoints() << "/" << game.getPoints() << endl;
 
@@ -616,6 +623,7 @@ bool solve(Game game, string path, int attempt) {
 
     bool takeGem = false;
 
+    // FAZA I
     int nextDirections[] = {0, 1, 2, 3, 4, 5, 6, 7};
     shuffle(&nextDirections[0], &nextDirections[8], std::mt19937(static_cast<uint32_t>(time(0))));
 
@@ -631,6 +639,7 @@ bool solve(Game game, string path, int attempt) {
         }
     }
 
+    // FAZA II
     if (!takeGem) {
         for (int j = 0; j <= Game::DIRECTION_COUNT; j++) {
             if (game.canMove(j) && game.leadToGem(j, 3)) {
@@ -645,6 +654,7 @@ bool solve(Game game, string path, int attempt) {
         }
     }
 
+    // FAZA III
     if (!takeGem) {
         for (int j = 0; j <= Game::DIRECTION_COUNT; j++) {
             if (game.canMove(j) && game.isGem(j)) {
